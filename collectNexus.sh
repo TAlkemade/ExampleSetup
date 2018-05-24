@@ -1,6 +1,7 @@
 #!/bin/bash
 
-#Usage ./collectNexus groupId artifactId version [packaging]
+# Usage ./collectNexus groupId artifactId version [packaging]
+# Example: ./collectNexus com.amis project 1.0.0 .jar
 
 # Collects given Artifact from NexusRepo
 
