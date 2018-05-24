@@ -1,14 +1,14 @@
 pipeline {
     agent any
     stages {
-        stage('Checkout'){
+        stage('Checkout') {
             steps {
-                echo 'Checked out'
+                sh 'echo Checked out'
             }
         }
-        stage('CollectArtifacts'){
+        stage('CollectArtifacts') {
             steps{
-                echo 'Collecting Artifacts'
+                sh 'echo Collecting Artifacts'
             }
         }
     }
