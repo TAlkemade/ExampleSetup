@@ -1,0 +1,15 @@
+<meta>
+	<info/>
+</meta>
+
+<artifact>
+	<groupId>com.amis</groupId>
+	<artifactId>project</artifactId>
+	<version>1.0.0</version>
+</artifact>
+
+<extra>
+	<more>
+		<text/>
+	</more>
+<extra>

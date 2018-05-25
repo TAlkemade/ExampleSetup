@@ -27,30 +27,25 @@ echo $(cat ${file}) > ${tmpFile}
 # grep requires text to be on 1 line
 grep -oP '(?<=<artifact>).*(?=<\/artifact>)' ${tmpFile} > ${tmpArtFile}
 
-groupId=$(grep -oP '(?<=<groupId>).*(?=<\/groupId>)' ${tmpArtFile})
-artifactId=$(grep -oP '(?<=<artifactId>).*(?=<\/artifactId>)' ${tmpArtFile})
-version=$(grep -oP '(?<=<version>).*(?=<\/version>)' ${tmpArtFile})
+# groupId=$(grep -oP '(?<=<groupId>).*(?=<\/groupId>)' ${tmpArtFile})
+# artifactId=$(grep -oP '(?<=<artifactId>).*(?=<\/artifactId>)' ${tmpArtFile})
+# version=$(grep -oP '(?<=<version>).*(?=<\/version>)' ${tmpArtFile})
+
+artifact=$(cat ${tmpArtFile})
+
+# Alternative: Substring Removal from front and end
+groupId=${artifact#*<groupId>}
+groupId=${groupId%*</groupId>*}
+
+artifactId=${artifact#*<artifactId>}
+artifactId=${artifactId%*</artifactId>*}
+
+version=${artifact#*<version>}
+version=${version%*</version>*}
 
 echo ${groupId}
 echo ${artifactId}
 echo ${version}
 
-
 # clean
-#rm ${tmpFile} ${tmpArtFile}
-
-#groupId=${string#}
-
-# Alternative: Substring Removal
-
-# ${string#substring}
-
-#     Deletes shortest match of $substring from front of $string.
-# ${string##substring}
-
-#     Deletes longest match of $substring from front of $string.
-
-
-# ${string%substring}
-
-#     Deletes shortest match of $substring from back of $string.
+rm ${tmpFile} ${tmpArtFile}
