@@ -9,6 +9,7 @@
 
 # Configuration
 fileName=BillOfMaterials.txt
+base="http://localhost:8081/repository/SAMPLE-REL"
 
 # Put content of file into a string
 fileString=$(cat ${fileName})
@@ -29,20 +30,31 @@ for ((i=0;i<numArtifacts;i++));do
     artifactCollection=${artifactCollection#*</artifact>}
 done
 
+# Obtain all infofields (groupId, artifactId, version) from artifacts
 artifacts=()
-components=(groupId artifactId version)
-for ((i=0;i<1;i++));do
+for ((i=0;i<numArtifacts;i++));do
     infoStrings[i]=${infoStrings[i]#*<groupId>}
-    artifacts[i]=${artifacts[i]}${infoStrings[i]%%</groupId>*}
+    artifacts[i]=${artifacts[i]}" "${infoStrings[i]%%</groupId>*}
 
     infoStrings[i]=${infoStrings[i]#*<artifactId>}
-    artifacts[i]=${artifacts[i]}${infoStrings[i]%%</artifactId>*}
+    artifacts[i]=${artifacts[i]}" "${infoStrings[i]%%</artifactId>*}
 
     infoStrings[i]=${infoStrings[i]#*<version>}
-    artifacts[i]=${artifacts[i]}${infoStrings[i]%%</version>*}
+    artifacts[i]=${artifacts[i]}" "${infoStrings[i]%%</version>*}
 done
 
-echo ${artifacts[0]}
+
+for ((i=0;i<numArtifacts;i++));do
+    info=${artifacts[i]}
+    info=($info)
+    groupId=${info[0]/.//}
+    artifactId=${info[1]}
+    version=${info[2]}
+
+    repoURL="${base}/${groupId}/${artifactId}/${version}/${artifactId}-${version}.jar"
+    # echo ${repoURL}
+    curl -X GET -f ${repoURL} -O
+done
 
 # echo ${artifactStrings[0]}
 # echo next
@@ -57,31 +69,3 @@ echo ${artifacts[0]}
 #     echo "${a}"
 #     echo next
 # done
-
-
-
-# # grep requires text to be on 1 line
-# grep -oP '(?<=<artifact>).*(?=<\/artifact>)' ${tmpFile} > ${tmpArtFile}
-#
-# # groupId=$(grep -oP '(?<=<groupId>).*(?=<\/groupId>)' ${tmpArtFile})
-# # artifactId=$(grep -oP '(?<=<artifactId>).*(?=<\/artifactId>)' ${tmpArtFile})
-# # version=$(grep -oP '(?<=<version>).*(?=<\/version>)' ${tmpArtFile})
-#
-# artifact=$(cat ${tmpArtFile})
-#
-# # Alternative: Substring Removal from front and end
-# groupId=${artifact#*<groupId>}
-# groupId=${groupId%*</groupId>*}
-#
-# artifactId=${artifact#*<artifactId>}
-# artifactId=${artifactId%*</artifactId>*}
-#
-# version=${artifact#*<version>}
-# version=${version%*</version>*}
-#
-# echo ${groupId}
-# echo ${artifactId}
-# echo ${version}
-#
-# # clean
-# rm ${tmpFile} ${tmpArtFile}
